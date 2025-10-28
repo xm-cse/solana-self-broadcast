@@ -87,6 +87,8 @@ Get your API key from [Crossmint Console](https://console.crossmint.com/)
 
 ### Running the Server-Side Script
 
+**Important:** Before running the script, you need to fund the Crossmint Smart Wallet with SOL. The wallet created by the script will be used as the payer for the transaction, so it needs sufficient SOL balance.
+
 Execute the server-side transaction flow:
 ```bash
 npx tsx components/real-wallet-integration.ts
@@ -94,11 +96,12 @@ npx tsx components/real-wallet-integration.ts
 
 This will:
 1. Create a Crossmint Smart Wallet
-2. Create a Token Program 2022 token
-3. Send the transaction to Crossmint for approval
-4. Sign with available signers
-5. Validate and broadcast the transaction
-6. Show the transaction ID and explorer link
+2. You must fund the wallet with SOL before proceeding (the script will show the wallet address)
+3. Create a Token Program 2022 token
+4. Send the transaction to Crossmint for approval
+5. Sign with available signers
+6. Validate and broadcast the transaction
+7. Show the transaction ID and explorer link
 
 
 ## API Reference
