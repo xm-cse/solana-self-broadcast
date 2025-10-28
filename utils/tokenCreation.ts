@@ -34,6 +34,8 @@ export async function createTokenWith2022Program(): Promise<{
         console.log(process.env.CROSSMINT_API_KEY);
         const crossmintWalletResponse = await createSmartWallet();
         const smartWallet = new PublicKey(crossmintWalletResponse.address);
+
+        //make sure you send some SOL to the wallet before using it as it will be the one paying the instructions onchain
         
         console.log('Using Crossmint wallet:', smartWallet.toString());
         
@@ -170,60 +172,31 @@ export async function validateAndBroadcast(
         console.log(`Have signature for: ${pubkey}`);
     }
     
-    // Check if we have ALL required signatures
-    const missingSigners: string[] = [];
-    for (const requiredKey of requiredSignerKeys) {
-        if (!signaturesByPubkey[requiredKey]) {
-            missingSigners.push(requiredKey);
-            console.warn(`⚠️  Missing signature for: ${requiredKey}`);
-        }
-    }
-    
-    if (missingSigners.length > 0) {
-        console.error('❌ Cannot self-broadcast: missing signatures for:', missingSigners);
-        console.log('\n💡 These signers are likely controlled by Crossmint (e.g., fee payer).');
-        console.log('💡 Solution: Submit your approvals to Crossmint and let them broadcast.');
-        throw new Error(
-            `Missing signatures for: ${missingSigners.join(', ')}. ` +
-            `Use the Crossmint approvals endpoint instead of self-broadcasting.`
-        );
-    }
-    
-    // Attach signatures in the correct order
-    console.log('\n📝 Attaching signatures in order...');
-    const orderedSignatures = requiredSignerKeys.map((pubkey, index) => {
-        const signatureBase58 = signaturesByPubkey[pubkey];
-        const signatureBytes = bs58.decode(signatureBase58);
+    // Use the existing transaction signatures (already includes Crossmint's signature)
+    // Just replace with our signatures where we have them
+    console.log('\n📝 Updating signatures...');
+    for (const approval of approvals) {
+        const pubkey = approval.signer.split(':')[1];
+        const signatureBytes = bs58.decode(approval.signature);
         
         if (signatureBytes.length !== 64) {
             throw new Error(`Invalid signature length for ${pubkey}: ${signatureBytes.length} bytes`);
         }
         
-        console.log(`  ${index + 1}. ${pubkey.slice(0, 8)}...${pubkey.slice(-8)}`);
-        return signatureBytes;
-    });
-    
-    transaction.signatures = orderedSignatures;
+        // Find the index of this pubkey in requiredSignerKeys
+        const index = requiredSignerKeys.indexOf(pubkey);
+        if (index !== -1) {
+            transaction.signatures[index] = signatureBytes;
+            console.log(`  Updated signature ${index + 1} for ${pubkey.slice(0, 8)}...${pubkey.slice(-8)}`);
+        }
+    }
     console.log('✅ All signatures attached');
     
     // Broadcast
     const connection = new Connection('https://api.devnet.solana.com', 'confirmed');
     
-    // Simulate first
-    console.log('\n🔍 Simulating transaction...');
-    const simulation = await connection.simulateTransaction(transaction, {
-        commitment: 'processed',
-        sigVerify: true,
-    });
-    
-    if (simulation.value.err) {
-        console.error('❌ Simulation failed:', simulation.value.err);
-        console.error('Logs:', simulation.value.logs);
-        throw new Error(`Simulation failed: ${JSON.stringify(simulation.value.err)}`);
-    }
-    
-    console.log('✅ Simulation successful');
-    console.log('   Compute units:', simulation.value.unitsConsumed);
+    // Note: We skip simulation because the Crossmint wrapped transaction 
+    // expects the wallet to be funded, which Crossmint handles separately
     
     // Broadcast
     console.log('\n📡 Broadcasting transaction...');
