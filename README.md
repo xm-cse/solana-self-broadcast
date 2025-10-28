@@ -100,14 +100,6 @@ This will:
 5. Validate and broadcast the transaction
 6. Show the transaction ID and explorer link
 
-### Running the Web Application
-
-For the full web UI experience:
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## API Reference
 
