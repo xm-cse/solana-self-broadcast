@@ -24,13 +24,11 @@ This implementation showcases how to:
 ```
 wallets-quickstart/
 ├── components/
-│   ├── real-wallet-integration.ts    # Main server-side execution script
-│   └── dashboard.tsx                 # Client-side UI (optional)
+│   └── real-wallet-integration.ts    # Main server-side execution script
 ├── utils/
 │   ├── tokenCreation.ts               # Token creation and transaction utilities
 │   └── walletUtils.ts                 # Crossmint wallet management
-└── app/
-    └── page.tsx                       # Next.js entry point
+└── .env                               # Environment configuration
 ```
 
 ## How It Works
