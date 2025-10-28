@@ -10,8 +10,11 @@
   },
   "dependencies": {
     "@crossmint/client-sdk-react-ui": "2.4.13",
+    "@solana/web3.js": "^1.98.4",
     "@vercel/analytics": "^1.5.0",
+    "bs58": "^6.0.0",
     "clsx": "^2.1.1",
+    "dotenv": "^17.2.3",
     "next": "15.2.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
