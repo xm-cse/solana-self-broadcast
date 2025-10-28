@@ -62,7 +62,7 @@ export async function createSmartWallet(): Promise<CrossmintWalletResponse> {
       {
         method: "POST",
         headers: {
-          "X-API-KEY": "sk_staging_AFZUDFHq2bddWxPaX1sD6suemuUzwoFJdQmR3AAV7nnGgurY2FqwEmyEhj5azFztjfQYn21GsvmNNgKaVdxrvEum52LheAnbG8k1s12Avjv7AzcsYTo8iWVKYnJo7EnMpu9E261shoNuNyGT7vC69WqwRXpG9dEh2TXxBaNCfWtWJuSDCiBVGFJfDcfgawAWKePHneT5dvWMjNHnsmngnRni",
+          "X-API-KEY": CROSSMINT_API_KEY,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
